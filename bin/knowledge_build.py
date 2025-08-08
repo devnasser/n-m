@@ -6,6 +6,7 @@ import time
 import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 TRAN_ROOT = Path('/workspace/tran')
 ME_ROOT = Path('/workspace/me')
@@ -77,6 +78,50 @@ def collect_metadata(root: Path, prev_map: dict):
                 'error': str(e)
             })
             changed_paths.append(rel)
+    return files, changed_paths
+
+
+def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int):
+    files = []
+    changed_paths = []
+    # First pass: stat and identify which need hashing
+    to_hash = []
+    stat_map = {}
+    for p in list_files(root):
+        rel = str(p.relative_to(root))
+        try:
+            st = p.stat()
+            stat_map[rel] = (p, st.st_size, st.st_mtime)
+            prev = prev_map.get(rel)
+            if not (prev and prev.get('size') == st.st_size and prev.get('mtime') == st.st_mtime):
+                to_hash.append(rel)
+        except Exception as e:
+            files.append({'abs_path': str(p), 'rel_path': rel, 'error': str(e)})
+            changed_paths.append(rel)
+    # Parallel hashing
+    sha_map = {}
+    if to_hash:
+        workers = max(1, min(max_workers, len(to_hash)))
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            future_to_rel = {pool.submit(sha256_file, stat_map[rel][0]): rel for rel in to_hash}
+            for fut in as_completed(future_to_rel):
+                rel = future_to_rel[fut]
+                try:
+                    sha_map[rel] = fut.result()
+                except Exception:
+                    sha_map[rel] = ''
+                changed_paths.append(rel)
+    # Build final files list
+    for rel, (p, size, mtime) in stat_map.items():
+        prev = prev_map.get(rel)
+        sha = sha_map.get(rel) if rel in sha_map else (prev.get('sha256') if prev else '')
+        files.append({
+            'abs_path': str(p),
+            'rel_path': rel,
+            'size': size,
+            'mtime': mtime,
+            'sha256': sha,
+        })
     return files, changed_paths
 
 
@@ -258,7 +303,11 @@ def main():
     prev_map = {f.get('rel_path'): f for f in prev_cache.get('files', [])} if isinstance(prev_cache, dict) else {}
 
     now = datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
-    files_meta, changed_paths = collect_metadata(TRAN_ROOT, prev_map)
+    try:
+        max_workers = int(os.getenv('KN_CONCURRENCY', str(os.cpu_count() or 2)))
+    except Exception:
+        max_workers = os.cpu_count() or 2
+    files_meta, changed_paths = collect_metadata_parallel(TRAN_ROOT, prev_map, max_workers)
 
     # Write JSON metadata
     knowledge = {
