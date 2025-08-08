@@ -42,7 +42,7 @@ schedule_build() {
     sleep "$DEBOUNCE_SECS"
     ts=$(date -u +%Y%m%d-%H%M%S)
     echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] change detected -> build" | tee -a "$LOG_DIR/watch.log" >/dev/null
-    python3 "$SCRIPT" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
+    ionice -c1 -n0 nice -n -5 python3 "$SCRIPT" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
     rm -f "$TRIGGER_FILE"
   ) &
 }
