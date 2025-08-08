@@ -44,3 +44,15 @@ setup-bench:
 
 setup-status:
 	bash /workspace/scripts/status.sh
+
+.PHONY: me-watch-start me-watch-stop
+me-watch-start:
+	chmod +x /workspace/bin/knowledge_watch.sh
+	nohup /workspace/bin/knowledge_watch.sh >/workspace/me/_logs/nohup.watch.out 2>&1 & echo $$! >/workspace/me/.knowledge_watch.launch.pid || true
+	@echo "knowledge watch requested to start (inotify)"
+
+me-watch-stop:
+	@if [ -f /workspace/me/.knowledge_watch.pid ]; then kill `cat /workspace/me/.knowledge_watch.pid` || true; fi
+	@if [ -f /workspace/me/.knowledge_watch.launch.pid ]; then kill `cat /workspace/me/.knowledge_watch.launch.pid` || true; fi
+	@rm -f /workspace/me/.knowledge_watch.pid /workspace/me/.knowledge_watch.launch.pid || true
+	@echo "knowledge watch stopped"
