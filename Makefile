@@ -22,3 +22,25 @@ me-stop:
 	@if [ -f /workspace/me/.knowledge_sync.launch.pid ]; then kill `cat /workspace/me/.knowledge_sync.launch.pid` || true; fi
 	@rm -f /workspace/me/.knowledge_sync.pid /workspace/me/.knowledge_sync.launch.pid || true
 	@echo "knowledge sync stopped"
+
+.PHONY: setup-fast setup-ultimate setup-full setup-extra setup-health setup-bench setup-status
+setup-fast:
+	bash /workspace/scripts/fast_env_boost.sh
+
+setup-ultimate:
+	bash /workspace/scripts/ultimate_speed.sh
+
+setup-full:
+	bash /workspace/scripts/full_boost.sh
+
+setup-extra:
+	bash /workspace/scripts/extra_speed_boost.sh
+
+setup-health:
+	bash /workspace/scripts/env_health_check.sh
+
+setup-bench:
+	bash /workspace/scripts/benchmark_team_speed.sh
+
+setup-status:
+	bash /workspace/scripts/status.sh
