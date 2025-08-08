@@ -136,8 +136,16 @@ files_n=$(echo "${fs_json}" | python3 -c 'import sys,json;print(json.load(sys.st
 ops_per_s() {
   local n="$1"; local secs="$2"; python3 - "$n" "$secs" <<'PY'
 import sys
-n=float(sys.argv[1]) if sys.argv[1] else 0
-s=float(sys.argv[2]) if sys.argv[2] else 0.000001
+try:
+    n=float(sys.argv[1]) if sys.argv[1] else 0.0
+except Exception:
+    n=0.0
+try:
+    s=float(sys.argv[2]) if sys.argv[2] else 0.0
+except Exception:
+    s=0.0
+if s <= 1e-9:
+    s = 1e-6
 print(f"{n/s:.0f}")
 PY
 }

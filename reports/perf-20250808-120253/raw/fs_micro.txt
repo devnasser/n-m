@@ -1,0 +1,2 @@
+$ python3 /workspace/reports/perf-20250808-120253/raw/fs_micro.py
+{"files": 5000, "create_s": 0.20607, "stat_s": 0.006871, "read_s": 0.03264}
