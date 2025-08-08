@@ -6,6 +6,7 @@ LOG_DIR="$ROOT/me/_logs"
 mkdir -p "$LOG_DIR"
 PID_FILE="$ROOT/me/.knowledge_sync.pid"
 SCRIPT="$ROOT/bin/knowledge_build.py"
+INTERVAL="${SYNC_INTERVAL_SECONDS:-5}"
 
 if [[ ! -f "$SCRIPT" ]]; then
   echo "knowledge_build.py not found at $SCRIPT" >&2
@@ -25,5 +26,5 @@ while true; do
   ts=$(date -u +%Y%m%d-%H%M%S)
   echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] running knowledge build" | tee -a "$LOG_DIR/sync.log" >/dev/null
   python3 "$SCRIPT" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
-  sleep 5
+  sleep "$INTERVAL"
 done

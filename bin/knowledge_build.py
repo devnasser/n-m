@@ -11,6 +11,7 @@ TRAN_ROOT = Path('/workspace/tran')
 ME_ROOT = Path('/workspace/me')
 ME_ROOT.mkdir(parents=True, exist_ok=True)
 
+CACHE_FILE = ME_ROOT / '.knowledge_cache.json'
 UTC = timezone.utc
 
 
@@ -36,25 +37,47 @@ def list_files(root: Path):
             yield p
 
 
-def collect_metadata(root: Path):
+def load_cache() -> dict:
+    if CACHE_FILE.exists():
+        try:
+            return json.loads(CACHE_FILE.read_text())
+        except Exception:
+            return {}
+    return {}
+
+
+def save_cache(cache: dict) -> None:
+    CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False))
+
+
+def collect_metadata(root: Path, prev_map: dict):
     files = []
+    changed_paths = []
     for p in list_files(root):
+        rel = str(p.relative_to(root))
         try:
             st = p.stat()
+            prev = prev_map.get(rel)
+            if prev and prev.get('size') == st.st_size and prev.get('mtime') == st.st_mtime:
+                sha = prev.get('sha256')
+            else:
+                sha = sha256_file(p)
+                changed_paths.append(rel)
             files.append({
                 'abs_path': str(p),
-                'rel_path': str(p.relative_to(root)),
+                'rel_path': rel,
                 'size': st.st_size,
                 'mtime': st.st_mtime,
-                'sha256': sha256_file(p)
+                'sha256': sha
             })
         except Exception as e:
             files.append({
                 'abs_path': str(p),
-                'rel_path': str(p.relative_to(root)),
+                'rel_path': rel,
                 'error': str(e)
             })
-    return files
+            changed_paths.append(rel)
+    return files, changed_paths
 
 
 def fmt_bytes(n: int) -> str:
@@ -215,13 +238,27 @@ def generate_summary_md(root: Path) -> str:
     return "\n".join(parts) + "\n"
 
 
+def write_if_changed(path: Path, content: str) -> bool:
+    """Write content to path only if different. Returns True if written."""
+    try:
+        if path.exists() and path.read_text(encoding='utf-8', errors='replace') == content:
+            return False
+    except Exception:
+        pass
+    path.write_text(content)
+    return True
+
+
 def main():
     if not TRAN_ROOT.exists():
         print(f"tran folder not found at {TRAN_ROOT}")
         sys.exit(1)
 
+    prev_cache = load_cache()
+    prev_map = {f.get('rel_path'): f for f in prev_cache.get('files', [])} if isinstance(prev_cache, dict) else {}
+
     now = datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
-    files_meta = collect_metadata(TRAN_ROOT)
+    files_meta, changed_paths = collect_metadata(TRAN_ROOT, prev_map)
 
     # Write JSON metadata
     knowledge = {
@@ -230,18 +267,28 @@ def main():
         'file_count': len(files_meta),
         'files': files_meta,
     }
-    (ME_ROOT / 'knowledge.json').write_text(json.dumps(knowledge, ensure_ascii=False, indent=2))
+    knowledge_path = ME_ROOT / 'knowledge.json'
+    wrote_json = write_if_changed(knowledge_path, json.dumps(knowledge, ensure_ascii=False, indent=2))
 
     # Write INDEX.md
-    (ME_ROOT / 'INDEX.md').write_text(generate_index_md(TRAN_ROOT, files_meta))
+    index_md = generate_index_md(TRAN_ROOT, files_meta)
+    wrote_index = write_if_changed(ME_ROOT / 'INDEX.md', index_md)
 
     # Write SUMMARY.md
-    (ME_ROOT / 'SUMMARY.md').write_text(generate_summary_md(TRAN_ROOT))
+    summary_md = generate_summary_md(TRAN_ROOT)
+    wrote_summary = write_if_changed(ME_ROOT / 'SUMMARY.md', summary_md)
 
-    # Write heartbeat
+    # Update cache
+    cache_obj = {
+        'files': files_meta,
+        'updated_at_utc': now,
+    }
+    save_cache(cache_obj)
+
+    # Write heartbeat always
     (ME_ROOT / 'latest_run.txt').write_text(now)
 
-    print(f"Knowledge built at {now}; files: {len(files_meta)}; output -> {ME_ROOT}")
+    print(f"Knowledge built at {now}; files={len(files_meta)}; changed={len(changed_paths)}; writes={{'json':wrote_json,'index':wrote_index,'summary':wrote_summary}}")
 
 
 if __name__ == '__main__':
