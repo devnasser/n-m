@@ -1,0 +1,2 @@
+$ curl -L -o /dev/null -s -w 'total: %{time_total}s size: %{size_download} bytes speed: %{speed_download} B/s\n' https://speed.cloudflare.com/__down?bytes=104857600
+total: 0.407967s size: 104857600 bytes speed: 257024710 B/s

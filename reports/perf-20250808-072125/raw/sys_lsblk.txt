@@ -1,0 +1,3 @@
+$ lsblk -o NAME,SIZE,TYPE,MOUNTPOINT
+NAME  SIZE TYPE MOUNTPOINT
+vda   128G disk /etc/hosts

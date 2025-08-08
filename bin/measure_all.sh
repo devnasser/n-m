@@ -106,12 +106,12 @@ get_dd_speed_mb() {
 
 parse_fs_micro_json() {
   local json_file="$1"
-  python3 - <<PY
+  python3 - "$json_file" <<'PY'
 import json,sys
 with open(sys.argv[1]) as f:
     data = f.read().strip()
 print(data)
-PY "${json_file}"
+PY
 }
 
 # OpenSSL summary lines
@@ -134,12 +134,12 @@ read_s=$(echo "${fs_json}" | python3 -c 'import sys,json;print(json.load(sys.std
 files_n=$(echo "${fs_json}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("files",""))' 2>/dev/null || true)
 
 ops_per_s() {
-  local n="$1"; local secs="$2"; python3 - <<PY
+  local n="$1"; local secs="$2"; python3 - "$n" "$secs" <<'PY'
 import sys
 n=float(sys.argv[1]) if sys.argv[1] else 0
 s=float(sys.argv[2]) if sys.argv[2] else 0.000001
 print(f"{n/s:.0f}")
-PY "$n" "$secs"
+PY
 }
 create_ops=$(ops_per_s "${files_n:-0}" "${create_s:-0.0}")
 stat_ops=$(ops_per_s "${files_n:-0}" "${stat_s:-0.0}")
