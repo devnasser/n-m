@@ -1,0 +1,8 @@
+[ultimate_speed] start: 2025-08-08T07:33:42Z
+[ultimate_speed] enabled hooksPath at .githooks
+[ultimate_speed] pest parallel flag would be: vendor/bin/pest --parallel
+[ultimate_speed] done: 2025-08-08T07:33:42Z
+[ultimate_speed] start: 2025-08-08T07:33:46Z
+[ultimate_speed] enabled hooksPath at .githooks
+[ultimate_speed] pest parallel flag would be: vendor/bin/pest --parallel
+[ultimate_speed] done: 2025-08-08T07:33:46Z
