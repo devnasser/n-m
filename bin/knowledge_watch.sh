@@ -9,6 +9,8 @@ PID_FILE="$ROOT/me/.knowledge_watch.pid"
 SCRIPT="$ROOT/bin/knowledge_build.py"
 DEBOUNCE_SECS="${DEBOUNCE_SECONDS:-0.5}"
 TRIGGER_FILE="$ROOT/me/.knowledge_build.scheduled"
+SENT_CHANGES="$ROOT/me/.watch_changes.tmp"
+: > "$SENT_CHANGES"
 
 need_tool() {
   command -v "$1" >/dev/null 2>&1 || { echo "missing tool: $1" >&2; return 1; }
@@ -32,8 +34,13 @@ trap 'rm -f "$PID_FILE" "$TRIGGER_FILE"' EXIT
 
 echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] watching $WATCH_ROOT" | tee -a "$LOG_DIR/watch.log" >/dev/null
 
+normalize_rel() {
+  local p="$1"
+  local rel="${p#$WATCH_ROOT/}"
+  printf "%s" "$rel"
+}
+
 schedule_build() {
-  # If a build is already scheduled, do nothing
   if [[ -f "$TRIGGER_FILE" ]]; then
     return 0
   fi
@@ -41,15 +48,20 @@ schedule_build() {
   (
     sleep "$DEBOUNCE_SECS"
     ts=$(date -u +%Y%m%d-%H%M%S)
-    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] change detected -> build" | tee -a "$LOG_DIR/watch.log" >/dev/null
-    ionice -c1 -n0 nice -n -5 python3 "$SCRIPT" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
+    # Read and export changes
+    CHANGES=$(tr '\n' ',' < "$SENT_CHANGES" | sed 's/,$//')
+    echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] change detected -> build (changes=${CHANGES})" | tee -a "$LOG_DIR/watch.log" >/dev/null
+    KN_CHANGED_PATHS="$CHANGES" ionice -c1 -n0 nice -n -5 python3 "$SCRIPT" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
+    : > "$SENT_CHANGES"
     rm -f "$TRIGGER_FILE"
   ) &
 }
 
-# Initial build once
+# Initial build once (no changes list)
 schedule_build
 
 inotifywait -m -r -e close_write,create,delete,move --format '%w%f %e' "$WATCH_ROOT" | while read -r path evt; do
+  rel=$(normalize_rel "$path")
+  echo "$rel" >> "$SENT_CHANGES"
   schedule_build
 done

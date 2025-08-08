@@ -6,6 +6,7 @@ import time
 import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
+from fnmatch import fnmatch
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 TRAN_ROOT = Path('/workspace/tran')
@@ -51,44 +52,31 @@ def save_cache(cache: dict) -> None:
     CACHE_FILE.write_text(json.dumps(cache, ensure_ascii=False))
 
 
-def collect_metadata(root: Path, prev_map: dict):
-    files = []
-    changed_paths = []
-    for p in list_files(root):
-        rel = str(p.relative_to(root))
-        try:
-            st = p.stat()
-            prev = prev_map.get(rel)
-            if prev and prev.get('size') == st.st_size and prev.get('mtime') == st.st_mtime:
-                sha = prev.get('sha256')
-            else:
-                sha = sha256_file(p)
-                changed_paths.append(rel)
-            files.append({
-                'abs_path': str(p),
-                'rel_path': rel,
-                'size': st.st_size,
-                'mtime': st.st_mtime,
-                'sha256': sha
-            })
-        except Exception as e:
-            files.append({
-                'abs_path': str(p),
-                'rel_path': rel,
-                'error': str(e)
-            })
-            changed_paths.append(rel)
-    return files, changed_paths
+def build_filters():
+    include = [s.strip() for s in os.getenv('KN_INCLUDE_GLOBS', '').split(',') if s.strip()]
+    ignore = [s.strip() for s in os.getenv('KN_IGNORE_GLOBS', '').split(',') if s.strip()]
+    def is_included(rel_path: str) -> bool:
+        rp = rel_path.replace('\\', '/')
+        if include:
+            ok = any(fnmatch(rp, pat) for pat in include)
+            if not ok:
+                return False
+        if ignore:
+            if any(fnmatch(rp, pat) for pat in ignore):
+                return False
+        return True
+    return is_included
 
 
-def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int):
+def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int, is_included) -> tuple[list, list]:
     files = []
     changed_paths = []
-    # First pass: stat and identify which need hashing
     to_hash = []
     stat_map = {}
     for p in list_files(root):
         rel = str(p.relative_to(root))
+        if not is_included(rel):
+            continue
         try:
             st = p.stat()
             stat_map[rel] = (p, st.st_size, st.st_mtime)
@@ -98,7 +86,6 @@ def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int):
         except Exception as e:
             files.append({'abs_path': str(p), 'rel_path': rel, 'error': str(e)})
             changed_paths.append(rel)
-    # Parallel hashing
     sha_map = {}
     if to_hash:
         workers = max(1, min(max_workers, len(to_hash)))
@@ -111,7 +98,6 @@ def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int):
                 except Exception:
                     sha_map[rel] = ''
                 changed_paths.append(rel)
-    # Build final files list
     for rel, (p, size, mtime) in stat_map.items():
         prev = prev_map.get(rel)
         sha = sha_map.get(rel) if rel in sha_map else (prev.get('sha256') if prev else '')
@@ -123,6 +109,62 @@ def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int):
             'sha256': sha,
         })
     return files, changed_paths
+
+
+def collect_from_changes_only(root: Path, prev_map: dict, changes: list[str], max_workers: int, is_included):
+    # Start from previous map as baseline
+    files_map: dict[str, dict] = {k: dict(v) for k, v in prev_map.items() if is_included(k)}
+    need_hash: list[str] = []
+    changed_paths: list[str] = []
+    for rel in changes:
+        if not is_included(rel):
+            # If previously tracked and now ignored, drop it
+            files_map.pop(rel, None)
+            continue
+        p = root / rel
+        if p.exists() and p.is_file():
+            try:
+                st = p.stat()
+                prev = prev_map.get(rel)
+                if not (prev and prev.get('size') == st.st_size and prev.get('mtime') == st.st_mtime):
+                    need_hash.append(rel)
+                # Update basic stats (sha filled later if needed)
+                files_map[rel] = {
+                    'abs_path': str(p),
+                    'rel_path': rel,
+                    'size': st.st_size,
+                    'mtime': st.st_mtime,
+                    'sha256': prev.get('sha256') if prev else ''
+                }
+                changed_paths.append(rel)
+            except Exception as e:
+                files_map[rel] = {
+                    'abs_path': str(p),
+                    'rel_path': rel,
+                    'error': str(e)
+                }
+                changed_paths.append(rel)
+        else:
+            # Deleted
+            if rel in files_map:
+                files_map.pop(rel, None)
+                changed_paths.append(rel)
+    # Hash needed files in parallel
+    if need_hash:
+        workers = max(1, min(max_workers, len(need_hash)))
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            future_to_rel = {pool.submit(sha256_file, (root / rel)): rel for rel in need_hash}
+            for fut in as_completed(future_to_rel):
+                rel = future_to_rel[fut]
+                try:
+                    sha = fut.result()
+                except Exception:
+                    sha = ''
+                if rel in files_map:
+                    files_map[rel]['sha256'] = sha
+    files_list = list(files_map.values())
+    files_list.sort(key=lambda x: x.get('rel_path', ''))
+    return files_list, changed_paths
 
 
 def fmt_bytes(n: int) -> str:
@@ -158,7 +200,6 @@ def summarize_openapi(p: Path) -> dict:
     if not p.exists():
         return info
     text = read_text(p)
-    # naive parse for title/version/paths count
     title = None
     version = None
     paths_count = text.count("\n  /") + text.count("\n/")
@@ -191,8 +232,6 @@ def summarize_csv(p: Path) -> dict:
 def generate_summary_md(root: Path) -> str:
     parts = []
     parts.append("### خلاصة المعرفة المستخلصة من tran")
-
-    # README
     readme = root / 'tran' / 'README.md'
     if readme.exists():
         parts.append("#### README")
@@ -200,8 +239,6 @@ def generate_summary_md(root: Path) -> str:
         parts.append("```")
         parts.append(txt[:2000])
         parts.append("```")
-
-    # Info
     info_dir = root / 'tran' / 'info'
     if info_dir.exists():
         for name in ['KNOWLEDGE_INDEX.md', 'ROOT_STRUCTURE.md']:
@@ -211,8 +248,6 @@ def generate_summary_md(root: Path) -> str:
                 parts.append("```")
                 parts.append(read_text(p)[:2000])
                 parts.append("```")
-
-    # KB
     kb_dir = root / 'tran' / 'kb'
     if kb_dir.exists():
         for name in ['CHANGELOG.md', 'all_knowledge.md']:
@@ -222,8 +257,6 @@ def generate_summary_md(root: Path) -> str:
                 parts.append("```")
                 parts.append(read_text(p)[:2000])
                 parts.append("```")
-
-    # API
     api_yaml = root / 'tran' / 'api' / 'openapi.yaml'
     api_info = summarize_openapi(api_yaml)
     parts.append("#### API (openapi.yaml)")
@@ -231,8 +264,6 @@ def generate_summary_md(root: Path) -> str:
     parts.append("|---|---|")
     for k in ['title', 'version', 'paths_approx']:
         parts.append(f"| {k} | {api_info.get(k)} |")
-
-    # Datasets
     ds_csv = root / 'tran' / 'datasets' / 'sample_posts.csv'
     ds_info = summarize_csv(ds_csv)
     parts.append("#### datasets/sample_posts.csv")
@@ -240,16 +271,12 @@ def generate_summary_md(root: Path) -> str:
     parts.append("|---|---|")
     for k in ['rows', 'columns', 'header']:
         parts.append(f"| {k} | {ds_info.get(k)} |")
-
-    # CI
     ci_file = root / 'tran' / 'ci' / 'github-actions.yml'
     if ci_file.exists():
         parts.append("#### CI/github-actions.yml")
         parts.append("```")
         parts.append(read_text(ci_file)[:2000])
         parts.append("```")
-
-    # Models, Projects, Setup, Tests, Tools
     for sub, title in [
         ('models', 'Models'),
         ('proj', 'Projects'),
@@ -265,8 +292,6 @@ def generate_summary_md(root: Path) -> str:
             for p in sorted(d.glob('*')):
                 if p.is_file():
                     parts.append(f"- {p.name} ({fmt_bytes(p.stat().st_size)})")
-
-    # Version
     version_json = root / 'tran' / 'version.json'
     if version_json.exists():
         parts.append("#### version.json")
@@ -279,12 +304,10 @@ def generate_summary_md(root: Path) -> str:
             parts.append("```")
             parts.append(read_text(version_json)[:2000])
             parts.append("```")
-
     return "\n".join(parts) + "\n"
 
 
 def write_if_changed(path: Path, content: str) -> bool:
-    """Write content to path only if different. Returns True if written."""
     try:
         if path.exists() and path.read_text(encoding='utf-8', errors='replace') == content:
             return False
@@ -294,11 +317,45 @@ def write_if_changed(path: Path, content: str) -> bool:
     return True
 
 
+def read_changes_from_env(root: Path):
+    changed_env = os.getenv('KN_CHANGED_PATHS', '').strip()
+    changed_file = os.getenv('KN_CHANGED_FILE', '').strip()
+    changes: list[str] = []
+    if changed_file:
+        p = Path(changed_file)
+        if p.exists():
+            try:
+                lines = [ln.strip() for ln in p.read_text().splitlines() if ln.strip()]
+                # normalize to rel
+                for ln in lines:
+                    try:
+                        rel = str(Path(ln).resolve().relative_to(root.resolve())) if ln.startswith('/') else ln
+                    except Exception:
+                        rel = ln
+                    changes.append(rel)
+            except Exception:
+                pass
+    if changed_env:
+        for part in changed_env.split(','):
+            s = part.strip()
+            if s:
+                changes.append(s)
+    # unique preserve order
+    seen = set()
+    uniq = []
+    for c in changes:
+        if c not in seen:
+            uniq.append(c)
+            seen.add(c)
+    return uniq
+
+
 def main():
     if not TRAN_ROOT.exists():
         print(f"tran folder not found at {TRAN_ROOT}")
         sys.exit(1)
 
+    is_included = build_filters()
     prev_cache = load_cache()
     prev_map = {f.get('rel_path'): f for f in prev_cache.get('files', [])} if isinstance(prev_cache, dict) else {}
 
@@ -307,9 +364,13 @@ def main():
         max_workers = int(os.getenv('KN_CONCURRENCY', str(os.cpu_count() or 2)))
     except Exception:
         max_workers = os.cpu_count() or 2
-    files_meta, changed_paths = collect_metadata_parallel(TRAN_ROOT, prev_map, max_workers)
 
-    # Write JSON metadata
+    changes = read_changes_from_env(TRAN_ROOT)
+    if changes:
+        files_meta, changed_paths = collect_from_changes_only(TRAN_ROOT, prev_map, changes, max_workers, is_included)
+    else:
+        files_meta, changed_paths = collect_metadata_parallel(TRAN_ROOT, prev_map, max_workers, is_included)
+
     knowledge = {
         'generated_at_utc': now,
         'source_root': str(TRAN_ROOT),
@@ -319,22 +380,18 @@ def main():
     knowledge_path = ME_ROOT / 'knowledge.json'
     wrote_json = write_if_changed(knowledge_path, json.dumps(knowledge, ensure_ascii=False, indent=2))
 
-    # Write INDEX.md
     index_md = generate_index_md(TRAN_ROOT, files_meta)
     wrote_index = write_if_changed(ME_ROOT / 'INDEX.md', index_md)
 
-    # Write SUMMARY.md
     summary_md = generate_summary_md(TRAN_ROOT)
     wrote_summary = write_if_changed(ME_ROOT / 'SUMMARY.md', summary_md)
 
-    # Update cache
     cache_obj = {
         'files': files_meta,
         'updated_at_utc': now,
     }
     save_cache(cache_obj)
 
-    # Write heartbeat always
     (ME_ROOT / 'latest_run.txt').write_text(now)
 
     print(f"Knowledge built at {now}; files={len(files_meta)}; changed={len(changed_paths)}; writes={{'json':wrote_json,'index':wrote_index,'summary':wrote_summary}}")
