@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: Zero-Code 360° API
+  version: 1.0.0
+paths:
+  /api/{model}:
+    get:
+      summary: List resources
+      parameters:
+        - in: path
+          name: model
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create resource
+      parameters:
+        - in: path
+          name: model
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object }
+      responses:
+        '201': { description: Created }
+  /api/{model}/{id}:
+    get:
+      summary: Show
+      parameters:
+        - in: path
+          name: model
+          required: true
+          schema: { type: string }
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
