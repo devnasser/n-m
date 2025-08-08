@@ -1,0 +1,17 @@
+name: Zero-Code CI
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Install deps
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Run tests
+        run: vendor/bin/pest --parallel
