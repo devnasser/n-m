@@ -52,6 +52,8 @@ schedule_build() {
     CHANGES=$(tr '\n' ',' < "$SENT_CHANGES" | sed 's/,$//')
     echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] change detected -> build (changes=${CHANGES})" | tee -a "$LOG_DIR/watch.log" >/dev/null
     KN_CHANGED_PATHS="$CHANGES" ionice -c1 -n0 nice -n -5 python3 "$SCRIPT" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
+    # Export AI reference after successful build (best-effort)
+    python3 "$ROOT/bin/ai_export.py" >> "$LOG_DIR/run-$ts.log" 2>&1 || true
     : > "$SENT_CHANGES"
     rm -f "$TRIGGER_FILE"
   ) &

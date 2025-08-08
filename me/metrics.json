@@ -1,0 +1,11 @@
+{
+  "ts_utc": "2025-08-08T12:11:33Z",
+  "files": 17,
+  "changed": 0,
+  "duration_s": 0.001617,
+  "writes": {
+    "json": true,
+    "index": false,
+    "summary": false
+  }
+}

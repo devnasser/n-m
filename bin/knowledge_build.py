@@ -14,6 +14,9 @@ ME_ROOT = Path('/workspace/me')
 ME_ROOT.mkdir(parents=True, exist_ok=True)
 
 CACHE_FILE = ME_ROOT / '.knowledge_cache.json'
+METRICS_JSONL = ME_ROOT / 'metrics.jsonl'
+METRICS_SUMMARY = ME_ROOT / 'metrics.json'
+SNAPSHOTS_DIR = ME_ROOT / 'snapshots'
 UTC = timezone.utc
 
 
@@ -112,13 +115,11 @@ def collect_metadata_parallel(root: Path, prev_map: dict, max_workers: int, is_i
 
 
 def collect_from_changes_only(root: Path, prev_map: dict, changes: list[str], max_workers: int, is_included):
-    # Start from previous map as baseline
     files_map: dict[str, dict] = {k: dict(v) for k, v in prev_map.items() if is_included(k)}
     need_hash: list[str] = []
     changed_paths: list[str] = []
     for rel in changes:
         if not is_included(rel):
-            # If previously tracked and now ignored, drop it
             files_map.pop(rel, None)
             continue
         p = root / rel
@@ -128,7 +129,6 @@ def collect_from_changes_only(root: Path, prev_map: dict, changes: list[str], ma
                 prev = prev_map.get(rel)
                 if not (prev and prev.get('size') == st.st_size and prev.get('mtime') == st.st_mtime):
                     need_hash.append(rel)
-                # Update basic stats (sha filled later if needed)
                 files_map[rel] = {
                     'abs_path': str(p),
                     'rel_path': rel,
@@ -145,11 +145,9 @@ def collect_from_changes_only(root: Path, prev_map: dict, changes: list[str], ma
                 }
                 changed_paths.append(rel)
         else:
-            # Deleted
             if rel in files_map:
                 files_map.pop(rel, None)
                 changed_paths.append(rel)
-    # Hash needed files in parallel
     if need_hash:
         workers = max(1, min(max_workers, len(need_hash)))
         with ProcessPoolExecutor(max_workers=workers) as pool:
@@ -326,7 +324,6 @@ def read_changes_from_env(root: Path):
         if p.exists():
             try:
                 lines = [ln.strip() for ln in p.read_text().splitlines() if ln.strip()]
-                # normalize to rel
                 for ln in lines:
                     try:
                         rel = str(Path(ln).resolve().relative_to(root.resolve())) if ln.startswith('/') else ln
@@ -340,7 +337,6 @@ def read_changes_from_env(root: Path):
             s = part.strip()
             if s:
                 changes.append(s)
-    # unique preserve order
     seen = set()
     uniq = []
     for c in changes:
@@ -350,16 +346,50 @@ def read_changes_from_env(root: Path):
     return uniq
 
 
+def snapshot_daily(outputs: list[Path], now_dt: datetime) -> None:
+    day = now_dt.strftime('%Y%m%d')
+    target = SNAPSHOTS_DIR / day
+    target.mkdir(parents=True, exist_ok=True)
+    for p in outputs:
+        try:
+            dest = target / p.name
+            if not dest.exists():
+                dest.write_text(p.read_text(encoding='utf-8', errors='replace'))
+        except Exception:
+            pass
+
+
+def append_metrics(now: str, files_count: int, changed_count: int, duration_s: float, writes: dict):
+    entry = {
+        'ts_utc': now,
+        'files': files_count,
+        'changed': changed_count,
+        'duration_s': round(duration_s, 6),
+        'writes': writes,
+    }
+    try:
+        with METRICS_JSONL.open('a') as f:
+            f.write(json.dumps(entry) + '\n')
+    except Exception:
+        pass
+    try:
+        METRICS_SUMMARY.write_text(json.dumps(entry, ensure_ascii=False, indent=2))
+    except Exception:
+        pass
+
+
 def main():
     if not TRAN_ROOT.exists():
         print(f"tran folder not found at {TRAN_ROOT}")
         sys.exit(1)
 
+    start_time = time.time()
     is_included = build_filters()
     prev_cache = load_cache()
     prev_map = {f.get('rel_path'): f for f in prev_cache.get('files', [])} if isinstance(prev_cache, dict) else {}
 
-    now = datetime.now(UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
+    now_dt = datetime.now(UTC)
+    now = now_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
     try:
         max_workers = int(os.getenv('KN_CONCURRENCY', str(os.cpu_count() or 2)))
     except Exception:
@@ -394,7 +424,14 @@ def main():
 
     (ME_ROOT / 'latest_run.txt').write_text(now)
 
-    print(f"Knowledge built at {now}; files={len(files_meta)}; changed={len(changed_paths)}; writes={{'json':wrote_json,'index':wrote_index,'summary':wrote_summary}}")
+    # Daily snapshot of outputs (idempotent per file/day)
+    snapshot_daily([knowledge_path, ME_ROOT / 'INDEX.md', ME_ROOT / 'SUMMARY.md'], now_dt)
+
+    duration = time.time() - start_time
+    writes = {'json': wrote_json, 'index': wrote_index, 'summary': wrote_summary}
+    append_metrics(now, len(files_meta), len(changed_paths), duration, writes)
+
+    print(f"Knowledge built at {now}; files={len(files_meta)}; changed={len(changed_paths)}; duration_s={duration:.3f}; writes={writes}")
 
 
 if __name__ == '__main__':
