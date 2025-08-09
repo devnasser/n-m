@@ -15,7 +15,7 @@ fi
 
 BC_ID="$1"
 RESOURCE_DIR="$2"
-OUTPUT_DIR="${3:-/workspace/bc_metadata}"
+OUTPUT_DIR="${3:-/workspace/ai_megred_learn/bc_metadata}"
 
 if [[ ! -d "$RESOURCE_DIR" ]]; then
   echo "Error: resource directory '$RESOURCE_DIR' does not exist" >&2
