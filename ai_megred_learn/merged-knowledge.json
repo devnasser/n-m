@@ -1,0 +1,178 @@
+[
+  {
+    "id": "bc-01b3d259-761d-4b02-808b-bb8564a36ded",
+    "name": "bc-01b3d259-761d-4b02-808b-bb8564a36ded",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-29647012-64a3-410a-8551-5829d66c5c2f",
+    "name": "bc-29647012-64a3-410a-8551-5829d66c5c2f",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-2a36493e-cecb-41f8-9649-fbaa8065651b",
+    "name": "bc-2a36493e-cecb-41f8-9649-fbaa8065651b",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-36b47a15-eb80-4e9d-b43a-92a03d37dd68",
+    "name": "bc-36b47a15-eb80-4e9d-b43a-92a03d37dd68",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-53e6b4fb-f99d-4529-8009-87cded370c2e",
+    "name": "bc-53e6b4fb-f99d-4529-8009-87cded370c2e",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated dummy resource for test",
+    "size_bytes": 11,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:03:01Z"
+  },
+  {
+    "id": "bc-66385910-81dd-4a15-a5c2-898ca178f28f",
+    "name": "bc-66385910-81dd-4a15-a5c2-898ca178f28f",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-6f51d46b-acaf-4420-bfcc-dde383262ffd",
+    "name": "bc-6f51d46b-acaf-4420-bfcc-dde383262ffd",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-757ca27c-5f17-4639-be3a-c40db5ad84cb",
+    "name": "bc-757ca27c-5f17-4639-be3a-c40db5ad84cb",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-769fce79-ac2e-47ac-9b4b-dcd441c51f57",
+    "name": "bc-769fce79-ac2e-47ac-9b4b-dcd441c51f57",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-ac204b85-e66f-47bd-b94f-5a72258e758b",
+    "name": "bc-ac204b85-e66f-47bd-b94f-5a72258e758b",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-b8a7ba53-02bb-4085-8b00-f48ba8692c72",
+    "name": "bc-b8a7ba53-02bb-4085-8b00-f48ba8692c72",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-c6862013-0867-4580-a63e-ec3dcfe80612",
+    "name": "bc-c6862013-0867-4580-a63e-ec3dcfe80612",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-cd787b2b-846c-408f-af2e-8a5e6dcb7034",
+    "name": "bc-cd787b2b-846c-408f-af2e-8a5e6dcb7034",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-d53b7194-4c63-47f4-bbec-9c3d1733c0da",
+    "name": "bc-d53b7194-4c63-47f4-bbec-9c3d1733c0da",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-d9db207a-9c0f-4c8f-9d0e-6765fb09fe17",
+    "name": "bc-d9db207a-9c0f-4c8f-9d0e-6765fb09fe17",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  },
+  {
+    "id": "bc-f2de85d5-4b15-44df-b29e-67063e1ee43e",
+    "name": "bc-f2de85d5-4b15-44df-b29e-67063e1ee43e",
+    "version": "0.0.1",
+    "type": "other",
+    "description": "auto-generated metadata by gen_meta.sh",
+    "size_bytes": 55,
+    "dependencies": [],
+    "license": "proprietary",
+    "exported_at": "2025-08-09T20:38:43Z"
+  }
+]
