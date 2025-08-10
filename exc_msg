@@ -18,9 +18,14 @@ mountpoint -q /mnt/ram || sudo mount -t tmpfs -o size=${ram_g}G tmpfs /mnt/ram
 export TMPDIR=/mnt/ram
 
 # ========= (ب) تنظيم المحاور =========
-BC_ID="<BC-ID>"
-mkdir -p  $HOME/spacework/$BC_ID/
-mkdir -p  $HOME/spacework/shared_knowledge/   # (اختياري)
+## إذا كان مجلد محاورك يحمل اسمًا على النمط bc-xxxxxxxx-… داخل
+#   $HOME/spacework/ فسيكتشفه السكربت تلقائيًّا، فلا داعي لتحديد المعرّف هنا.
+#   أمّا إذا لديك أكثر من مجلد، فمرِّر المعرّف كمعامل بعد الأمر:  ./exc bc-xxxx
+
+# مثال افتراضي للاسم:
+#   mkdir -p $HOME/spacework/bc-01b3d259-761d-4b02-808b-bb8564a36ded/
+
+mkdir -p  $HOME/spacework/bc-*/   # أنشئ مجلدك إن لم يكن موجودًا
 
 #  ضع الملفات الـ 15 التالية داخل $HOME/spacework/$BC_ID/ بنفس الأسماء EXACT:
 # weights.bin  config.json  tokenizer.json  io_schema.json  train_data_info.txt
@@ -29,20 +34,21 @@ mkdir -p  $HOME/spacework/shared_knowledge/   # (اختياري)
 # وإذا لديك معرفة إضافيّة ضعها في shared_knowledge/
 
 # ========= (ج) ملف manifest للتحقّق =========
-cd $HOME/spacework/$BC_ID/
+cd $HOME/spacework/bc-*/
 sha256sum * > manifest.sha256
 cd $HOME/spacework
 
 # ========= (د) ضغط كل شيء بأقصى سرعة =========
-tar -I 'zstd -19 -T0' -cf ${BC_ID}.tar.zst  ${BC_ID}/  shared_knowledge/ 2>/dev/null
+name=$(basename $(ls -d $HOME/spacework/bc-* | head -n1))
+tar -I 'zstd -19 -T0' -cf ${name}.tar.zst  ${name}/  shared_knowledge/ 2>/dev/null
 
 # ========= (هـ) رفع الأرشيف إلى مخزوننا المركزي =========
 # إذا كنت داخل نفس حاوية المشروع:
 mkdir -p /workspace/ai_megred_learn/shard/
-cp -v ${BC_ID}.tar.zst /workspace/ai_megred_learn/shard/
+cp -v ${name}.tar.zst /workspace/ai_megred_learn/shard/
 
 # إذا كنت على خادم Cursor مختلف يملك وصول SSH:
-# rsync -avP --compress-level=9 ${BC_ID}.tar.zst \
+# rsync -avP --compress-level=9 ${name}.tar.zst \
 #       user@HOST:/workspace/ai_megred_learn/shard/
 
 # ========= (و) ما سيحدث تلقائيّاً بعد الرفع =========
