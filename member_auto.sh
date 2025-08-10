@@ -6,9 +6,20 @@
 
 set -euo pipefail
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <BC-ID> [EXTRA_DIR]" >&2; exit 1; fi
-BC_ID="$1"; shift || true
+if [[ $# -ge 1 ]]; then
+  BC_ID="$1"; shift || true
+else
+  candidates=(/workspace/spacework/bc-*)
+  if [[ ${#candidates[@]} -eq 1 && -d "${candidates[0]}" ]]; then
+    BC_ID="$(basename "${candidates[0]}")"
+    echo "[INFO] اكتشف السكربت المعرّف تلقائياً: $BC_ID"
+  else
+    echo "Usage: $0 <BC-ID> [EXTRA_DIR]" >&2
+    echo "أو ضع مجلداً واحداً باسم bc-... داخل /workspace/spacework/ وسيُكتشف تلقائياً" >&2
+    exit 1
+  fi
+fi
+
 EXTRA_DIR="${1:-}"
 
 WORK_ROOT="/workspace"
