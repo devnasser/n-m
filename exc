@@ -1,9 +1,17 @@
 # خطة تسليم المحاور الخمسة عشر إلى مركز ai_megred_learn
 # ------------------------------------------------------
-# هذا الملف يجمع كل ما يحتاجه العضو (BC-ID) من الألف إلى الياء:
-#  1. تعليمات يدوية مختصرة.
-#  2. سكربت آلي يمكن تشغيله مباشرة بعد تعديل ثلاثة متغيّرات.
-#  يمكن قراءة الملف، أو تنزيله وتنفيذه مباشرة.
+# القسم 0) تفعيل «نمط السرعة القصوى» (يُنفَّذ مرّة واحدة قبل كل شيء)
+# -------------------------------------------------------------------
+# 1. تحديث الحزم وتثبيت الأدوات المتوازية:
+#    sudo apt-get update && sudo apt-get install -y zstd pigz aria2 rsync parallel inotify-tools jq
+# 2. تفعيل جميع أنوية المعالج للتوازي:
+#    export ZSTD_NBTHREADS=$(nproc)
+#    export OMP_NUM_THREADS=$(nproc)
+# 3. إنشاء tmpfs سعة 4 GiB لتسريع I/O المؤقت:
+#    sudo mkdir -p /mnt/ram && sudo mount -t tmpfs -o size=4G tmpfs /mnt/ram
+#    echo "TMPDIR=/mnt/ram" >> ~/.bashrc
+# 4. التحقّق من أنّ الأمر zstd يُظهر "Threads" ≥ عدد الأنوية:
+#    zstd -V
 
 ###############################################################################
 # القسم A) التعليمات اليدويّة المختصرة
@@ -53,6 +61,9 @@ SHARD_DIR="$DEST_PARENT/shard"
 set -euo pipefail
 # استخدم tmpfs ( /mnt/ram ) إن وُجِد لتحسين I/O المؤقت
 [[ -d /mnt/ram ]] && export TMPDIR=/mnt/ram
+# تفعيل المتغيّرات البيئيّة للسرعة القصوى داخل السكربت نفسه
+export ZSTD_NBTHREADS="${ZSTD_NBTHREADS:-$(nproc)}"
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-$(nproc)}"
 TMP=$(mktemp -d)
 
 echo "[*] نسخ المحاور إلى مجلد مؤقت …"
