@@ -1,0 +1,19 @@
+[INFO] البيئة جاهزة (Threads=4, tmpfs=7G)
+'/workspace/spacework/bc-test/baseline_metrics.txt' -> '/mnt/ram/tmp.MJeK3SRPvK/baseline_metrics.txt'
+'/workspace/spacework/bc-test/CHANGELOG.md' -> '/mnt/ram/tmp.MJeK3SRPvK/CHANGELOG.md'
+'/workspace/spacework/bc-test/checkpoint.ckpt' -> '/mnt/ram/tmp.MJeK3SRPvK/checkpoint.ckpt'
+'/workspace/spacework/bc-test/config.json' -> '/mnt/ram/tmp.MJeK3SRPvK/config.json'
+'/workspace/spacework/bc-test/fine_tune.sh' -> '/mnt/ram/tmp.MJeK3SRPvK/fine_tune.sh'
+'/workspace/spacework/bc-test/hyperparams.json' -> '/mnt/ram/tmp.MJeK3SRPvK/hyperparams.json'
+'/workspace/spacework/bc-test/io_schema.json' -> '/mnt/ram/tmp.MJeK3SRPvK/io_schema.json'
+'/workspace/spacework/bc-test/LICENSE.txt' -> '/mnt/ram/tmp.MJeK3SRPvK/LICENSE.txt'
+'/workspace/spacework/bc-test/postprocess.py' -> '/mnt/ram/tmp.MJeK3SRPvK/postprocess.py'
+'/workspace/spacework/bc-test/README.md' -> '/mnt/ram/tmp.MJeK3SRPvK/README.md'
+'/workspace/spacework/bc-test/requirements.txt' -> '/mnt/ram/tmp.MJeK3SRPvK/requirements.txt'
+'/workspace/spacework/bc-test/safety.md' -> '/mnt/ram/tmp.MJeK3SRPvK/safety.md'
+'/workspace/spacework/bc-test/tokenizer.json' -> '/mnt/ram/tmp.MJeK3SRPvK/tokenizer.json'
+'/workspace/spacework/bc-test/train_data_info.txt' -> '/mnt/ram/tmp.MJeK3SRPvK/train_data_info.txt'
+'/workspace/spacework/bc-test/weights.bin' -> '/mnt/ram/tmp.MJeK3SRPvK/weights.bin'
+[INFO] الملفات جاهزة في /mnt/ram/tmp.MJeK3SRPvK
+'bc-test.tar.zst' -> '/workspace/ai_megred_learn/shard/bc-test.tar.zst'
+[✓] تم رفع bc-test.tar.zst إلى /workspace/ai_megred_learn/shard بنجاح
