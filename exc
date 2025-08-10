@@ -50,10 +50,10 @@
 # export_and_upload.sh  —  تسليم المحاور الخمسة عشر إلى مركز ai_megred_learn
 #############################################################################
 BC_ID="bc-xxxx"                   # ← ضع معرّفك الكامل هنا (سيصبح اسم الأرشيف)
-# المجلّد الجذري لعضوك داخل بيئته الخاصة (عادةً /workspace أو أي مسار عمل)
-MEMBER_WS="$HOME/workspace"        # ← عدّله إذا كنت تعمل خارج /workspace
-# مجلّد المحاور الخمسة عشر داخل مساحة عملك
-MODEL_DIR="$MEMBER_WS/my_model_dir"
+# المسار الجذري لبيئة عملك الخاصّة (spacework)
+MEMBER_WS="$HOME/spacework"        # ← عدّله إذا كان مسارك مختلفًا
+# مجلّد المحاور داخل مجلّد يحمل اسم معرّفك
+MODEL_DIR="$MEMBER_WS/$BC_ID"      # مثال: /home/user/spacework/bc-xxxx
 EXTRA_DIR=""                     # ← مسار معرفة إضافيّة (فردي/تشاركي)؛ اتركه فارغًا إن لم يوجد
 REMOTE=""                         # ← user@HOST لتفعيل rsync عبر SSH (اتركه فارغًا للنسخ المحلي)
 
@@ -71,6 +71,7 @@ TMP=$(mktemp -d)
 
 echo "[*] نسخ المحاور إلى مجلد مؤقت …"
 # نسخ المحاور الإلزامية
+mkdir -p "$MODEL_DIR"  # تأكّد من وجود المجلّد قبل النسخ
 cp -v "$MODEL_DIR"/{weights.bin,config.json,tokenizer.json,io_schema.json,train_data_info.txt,hyperparams.json,fine_tune.sh,requirements.txt,baseline_metrics.txt,LICENSE.txt,README.md,safety.md,checkpoint.ckpt,postprocess.py,CHANGELOG.md} "$TMP/"
 
 # تضمين المعرفة الإضافيّة (فرديّة أو تشاركيّة) إن وُجدت
