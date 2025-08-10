@@ -1,0 +1,74 @@
+# خطة تسليم المحاور الخمسة عشر إلى مركز ai_megred_learn
+# ------------------------------------------------------
+# هذا الملف يجمع كل ما يحتاجه العضو (BC-ID) من الألف إلى الياء:
+#  1. تعليمات يدوية مختصرة.
+#  2. سكربت آلي يمكن تشغيله مباشرة بعد تعديل ثلاثة متغيّرات.
+#  يمكن قراءة الملف، أو تنزيله وتنفيذه مباشرة.
+
+###############################################################################
+# القسم A) التعليمات اليدويّة المختصرة
+###############################################################################
+
+1. ثبّت الأدوات (مرّة واحدة):
+   • zstd ≥ 1.4   • aria2c أو rsync   • tar   • sha256sum
+
+2. اجمع الملفات الخمسة عشر التالية في مجلّد واحد (export_<BC-ID>/):
+   weights.bin, config.json, tokenizer.json, io_schema.json,
+   train_data_info.txt, hyperparams.json, fine_tune.sh, requirements.txt,
+   baseline_metrics.txt, LICENSE.txt, README.md, safety.md,
+   checkpoint.ckpt, postprocess.py, CHANGELOG.md
+
+3. تأكّد بأن العدد = 15 ثم أنشئ ملف تجزئة:
+   sha256sum * > manifest.sha256
+
+4. اضغط المجلّد بأقصى ضغط ومتعدّد الخيوط:
+   tar -I 'zstd -19 -T0' -cf <BC-ID>.tar.zst export_<BC-ID>/
+
+5. انسخ الأرشيف إلى المسار داخل الحاوية:
+   /workspace/ai_megred_learn/shard/
+   (استخدم aria2c أو rsync أو docker cp حسب بيئتك.)
+
+6. خلال ≤15 ثانية سيظهر اسمك «✅ مستلم» في جدول الحالة.
+
+###############################################################################
+# القسم B) السكربت الآلي: export_and_upload.sh
+###############################################################################
+# انسخ الأسطر أدناه إلى ملف باسم export_and_upload.sh، عدّل BC_ID وMODEL_DIR
+# (وأيضاً REMOTE إن احتجت الرفع عبر SSH)، ثم نفّذ:
+#   bash export_and_upload.sh
+
+#!/usr/bin/env bash
+#############################################################################
+# export_and_upload.sh  —  تسليم المحاور الخمسة عشر إلى مركز ai_megred_learn
+#############################################################################
+BC_ID="bc-xxxx"                   # ← ضع معرّفك الكامل هنا
+MODEL_DIR="$HOME/my_model_dir"    # ← مسار ملفات النموذج المحلية
+REMOTE=""                         # ← user@HOST (إن احتجت rsync عبر SSH)
+
+set -euo pipefail
+TMP=$(mktemp -d)
+
+echo "[*] نسخ المحاور إلى مجلد مؤقت …"
+cp -v "$MODEL_DIR"/{weights.bin,config.json,tokenizer.json,io_schema.json,train_data_info.txt,hyperparams.json,fine_tune.sh,requirements.txt,baseline_metrics.txt,LICENSE.txt,README.md,safety.md,checkpoint.ckpt,postprocess.py,CHANGELOG.md} "$TMP/"
+
+(cd "$TMP" && sha256sum * > manifest.sha256)
+
+ARCHIVE="${BC_ID}.tar.zst"
+echo "[*] ضغط الأرشيف بـ zstd -19 -T0 …"
+tar -I 'zstd -19 -T0' -cf "$ARCHIVE" -C "$TMP" .
+
+DEST="/workspace/ai_megred_learn/shard/$ARCHIVE"
+if [[ -z "$REMOTE" ]]; then
+  echo "[*] نسخ محلي إلى $DEST …"
+  mkdir -p /workspace/ai_megred_learn/shard
+  cp -v "$ARCHIVE" "$DEST"
+else
+  echo "[*] رفع عبر rsync إلى $REMOTE …"
+  rsync -avP --compress-level=9 "$ARCHIVE" "$REMOTE:$DEST"
+fi
+
+echo "[✓] تم الرفع. سيُعالج النظام الملف خلال ثوانٍ."
+
+###############################################################################
+# نهاية الملف
+###############################################################################
