@@ -1,62 +1,51 @@
-# رسالة موحّدة لتنفيذ تسليم المعرفة داخل بيئة Cursor (حاوية Ubuntu)
-# -----------------------------------------------------------------
-# اتّبع الخطوات من الألف إلى الياء، يدويًا، من دون تنزيل سكربتات خارجية.
-# تأكّد أنك تعمل في الطرفيّة داخل مجلّد /workspace في جلسة Cursor.
+# رسالة موحّدة لإرسالها في محادثة Cursor إلى الذكاء الاصطناعي (تنفيذ يدوي من الألف إلى الياء)
+# ------------------------------------------------------------------------------------------------------
+# استبدِل <BC-ID> بمعرّفك الكامل قبل الإرسال. عند لصق الرسالة في Cursor ستظهر كتلة الأوامر جاهزة للتنفيذ.
 
-############################################
-## (أ) تهيئة البيئة للسرعة القصوى
-############################################
-sudo apt-get update -y && \
-  sudo apt-get install -y zstd pigz aria2 rsync parallel inotify-tools jq && \
-  export ZSTD_NBTHREADS=$(nproc) && \
-  export OMP_NUM_THREADS=$(nproc) && \
-  sudo mkdir -p /mnt/ram && \
-  ram_g=$(( $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024 / 1024 / 2 )) && \
-  [[ $ram_g -lt 1 ]] && ram_g=1 && \
-  (mountpoint -q /mnt/ram || sudo mount -t tmpfs -o size=${ram_g}G tmpfs /mnt/ram) && \
-  export TMPDIR=/mnt/ram
+### التعليمات الكاملة لتسليم المحاور إلى ai_megred_learn
 
-############################################
-## (ب) تنظيم المحاور
-############################################
-BC_ID="<اكتب_معرّفك_الكامل_هنا>"   # مثال: bc-01b3d259-761d-4b02-808b-bb85…
-mkdir -p $HOME/spacework/$BC_ID/
+```bash
+# ========= (أ) تهيئة البيئة للسرعة القصوى =========
+sudo apt-get update -y \
+ && sudo apt-get install -y zstd pigz aria2 rsync parallel inotify-tools jq
+export ZSTD_NBTHREADS=$(nproc)
+export OMP_NUM_THREADS=$(nproc)
 
-# انسخ الملفات الخمسة عشر إلى هذا المجلّد بالأسماء EXACT:
+sudo mkdir -p /mnt/ram
+ram_g=$(( $(grep MemTotal /proc/meminfo | awk '{print $2}') / 1024 / 1024 / 2 ))
+[[ $ram_g -lt 1 ]] && ram_g=1
+mountpoint -q /mnt/ram || sudo mount -t tmpfs -o size=${ram_g}G tmpfs /mnt/ram
+export TMPDIR=/mnt/ram
+
+# ========= (ب) تنظيم المحاور =========
+BC_ID="<BC-ID>"
+mkdir -p  $HOME/spacework/$BC_ID/
+mkdir -p  $HOME/spacework/shared_knowledge/   # (اختياري)
+
+#  ضع الملفات الـ 15 التالية داخل $HOME/spacework/$BC_ID/ بنفس الأسماء EXACT:
 # weights.bin  config.json  tokenizer.json  io_schema.json  train_data_info.txt
 # hyperparams.json  fine_tune.sh  requirements.txt  baseline_metrics.txt
 # LICENSE.txt  README.md  safety.md  checkpoint.ckpt  postprocess.py  CHANGELOG.md
+# وإذا لديك معرفة إضافيّة ضعها في shared_knowledge/
 
-# (اختياري) مجلّد معرفة إضافية
-mkdir -p $HOME/spacework/shared_knowledge/
-# ضع فيه أوراق بحث أو أكواد أو ملفات داعمة إذا وجدت.
-
-############################################
-## (ج) إنشاء manifest
-############################################
+# ========= (ج) ملف manifest للتحقّق =========
 cd $HOME/spacework/$BC_ID/
 sha256sum * > manifest.sha256
 cd $HOME/spacework
 
-############################################
-## (د) ضغط الأرشيف بأقصى سرعة
-############################################
-tar -I 'zstd -19 -T0' -cf ${BC_ID}.tar.zst ${BC_ID}/ shared_knowledge/ 2>/dev/null
+# ========= (د) ضغط كل شيء بأقصى سرعة =========
+tar -I 'zstd -19 -T0' -cf ${BC_ID}.tar.zst  ${BC_ID}/  shared_knowledge/ 2>/dev/null
 
-############################################
-## (هـ) رفع الأرشيف إلى مخزوننا المركزي
-############################################
-# إذا كنت داخل نفس حاوية المشروع التي تحتوي /workspace/ai_megred_learn:
+# ========= (هـ) رفع الأرشيف إلى مخزوننا المركزي =========
+# إذا كنت داخل نفس حاوية المشروع:
 mkdir -p /workspace/ai_megred_learn/shard/
 cp -v ${BC_ID}.tar.zst /workspace/ai_megred_learn/shard/
 
-# إذا كنت على خادم Cursor مختلف ولديك وصول SSH إلى الحاوية المركزيّة:
-# rsync -avP --compress-level=9 ${BC_ID}.tar.zst user@HOST:/workspace/ai_megred_learn/shard/
+# إذا كنت على خادم Cursor مختلف يملك وصول SSH:
+# rsync -avP --compress-level=9 ${BC_ID}.tar.zst \
+#       user@HOST:/workspace/ai_megred_learn/shard/
 
-############################################
-## (و) ماذا سيحدث تلقائيًا؟
-############################################
-# inotify سيلتقط الأرشيف، يتم فكّه، تحديث meta، والدمج في merged-knowledge.json
-# ستظهر أيقونة ✅ "مستلم" أمام معرّفك في جدول الحالة خلال ≤ 15 ثانية.
-
-# انتهى ✅
+# ========= (و) ما سيحدث تلقائيّاً بعد الرفع =========
+# inotify يفكّ الأرشيف ويحدّث meta ثم merged-knowledge.json
+# ستظهر أيقونة ✅ "مستلم" أمام BC-ID في جدول الحالة خلال ≤ 15 ثانية.
+```
