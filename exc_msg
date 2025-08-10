@@ -25,7 +25,7 @@ export TMPDIR=/mnt/ram
 # مثال افتراضي للاسم:
 #   mkdir -p $HOME/spacework/bc-01b3d259-761d-4b02-808b-bb8564a36ded/
 
-mkdir -p  $HOME/spacework/bc-*/   # أنشئ مجلدك إن لم يكن موجودًا
+mkdir -p  /workspace/spacework/bc-*/   # أنشئ مجلدك إن لم يكن موجودًا
 
 #  ضع الملفات الـ 15 التالية داخل $HOME/spacework/$BC_ID/ بنفس الأسماء EXACT:
 # weights.bin  config.json  tokenizer.json  io_schema.json  train_data_info.txt
@@ -34,12 +34,12 @@ mkdir -p  $HOME/spacework/bc-*/   # أنشئ مجلدك إن لم يكن موج�
 # وإذا لديك معرفة إضافيّة ضعها في shared_knowledge/
 
 # ========= (ج) ملف manifest للتحقّق =========
-cd $HOME/spacework/bc-*/
+cd /workspace/spacework/bc-*/
 sha256sum * > manifest.sha256
-cd $HOME/spacework
+cd /workspace/spacework
 
 # ========= (د) ضغط كل شيء بأقصى سرعة =========
-name=$(basename $(ls -d $HOME/spacework/bc-* | head -n1))
+name=$(basename $(ls -d /workspace/spacework/bc-* | head -n1))
 tar -I 'zstd -19 -T0' -cf ${name}.tar.zst  ${name}/  shared_knowledge/ 2>/dev/null
 
 # ========= (هـ) رفع الأرشيف إلى مخزوننا المركزي =========
