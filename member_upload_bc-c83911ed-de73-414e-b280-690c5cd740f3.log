@@ -1,0 +1,19 @@
+[INFO] البيئة جاهزة (Threads=4, tmpfs=7G)
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/baseline_metrics.txt' -> '/mnt/ram/tmp.AgwvSM5Efd/baseline_metrics.txt'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/CHANGELOG.md' -> '/mnt/ram/tmp.AgwvSM5Efd/CHANGELOG.md'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/checkpoint.ckpt' -> '/mnt/ram/tmp.AgwvSM5Efd/checkpoint.ckpt'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/config.json' -> '/mnt/ram/tmp.AgwvSM5Efd/config.json'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/fine_tune.sh' -> '/mnt/ram/tmp.AgwvSM5Efd/fine_tune.sh'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/hyperparams.json' -> '/mnt/ram/tmp.AgwvSM5Efd/hyperparams.json'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/io_schema.json' -> '/mnt/ram/tmp.AgwvSM5Efd/io_schema.json'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/LICENSE.txt' -> '/mnt/ram/tmp.AgwvSM5Efd/LICENSE.txt'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/postprocess.py' -> '/mnt/ram/tmp.AgwvSM5Efd/postprocess.py'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/README.md' -> '/mnt/ram/tmp.AgwvSM5Efd/README.md'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/requirements.txt' -> '/mnt/ram/tmp.AgwvSM5Efd/requirements.txt'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/safety.md' -> '/mnt/ram/tmp.AgwvSM5Efd/safety.md'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/tokenizer.json' -> '/mnt/ram/tmp.AgwvSM5Efd/tokenizer.json'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/train_data_info.txt' -> '/mnt/ram/tmp.AgwvSM5Efd/train_data_info.txt'
+'/workspace/spacework/bc-c83911ed-de73-414e-b280-690c5cd740f3/weights.bin' -> '/mnt/ram/tmp.AgwvSM5Efd/weights.bin'
+[INFO] الملفات جاهزة في /mnt/ram/tmp.AgwvSM5Efd
+'bc-c83911ed-de73-414e-b280-690c5cd740f3.tar.zst' -> '/workspace/ai_megred_learn/shard/bc-c83911ed-de73-414e-b280-690c5cd740f3.tar.zst'
+[✓] تم رفع bc-c83911ed-de73-414e-b280-690c5cd740f3.tar.zst إلى /workspace/ai_megred_learn/shard بنجاح
