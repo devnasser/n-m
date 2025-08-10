@@ -56,12 +56,40 @@ MEMBER_WS="$HOME/spacework"        # ← عدّله إذا كان مسارك م�
 MODEL_DIR="$MEMBER_WS/$BC_ID"      # مثال: /home/user/spacework/bc-xxxx
 EXTRA_DIR=""                     # ← مسار معرفة إضافيّة (فردي/تشاركي)؛ اتركه فارغًا إن لم يوجد
 REMOTE=""                         # ← user@HOST لتفعيل rsync عبر SSH (اتركه فارغًا للنسخ المحلي)
+# إعداد تلقائي (true/false) — إذا true سيحاول تثبيت الأدوات وتهيئة tmpfs
+PREPARE_ENV=true
 
 # مسار المشروع (المجلد الأب) داخل الحاوية — لا تعدّله
 DEST_PARENT="/workspace/ai_megred_learn"
 SHARD_DIR="$DEST_PARENT/shard"
 
 set -euo pipefail
+#-----------------------------------------------------------------------------
+# دالة تحضير البيئة (اختيارية)
+#-----------------------------------------------------------------------------
+prepare_environment() {
+  echo "[*] تهيئة البيئة (install tools / tmpfs) …"
+  if [[ "$PREPARE_ENV" == "true" ]]; then
+    # تثبيت الأدوات بحال وجود صلاحية sudo
+    if command -v sudo &>/dev/null; then
+      sudo apt-get update -y
+      sudo apt-get install -y zstd pigz aria2 rsync parallel inotify-tools jq || true
+    fi
+    # تفعيل المتغيّرات
+    export ZSTD_NBTHREADS="${ZSTD_NBTHREADS:-$(nproc)}"
+    export OMP_NUM_THREADS="${OMP_NUM_THREADS:-$(nproc)}"
+    # إنشاء tmpfs إن لم يكن مركبًا
+    if [[ ! -d /mnt/ram ]]; then
+      sudo mkdir -p /mnt/ram || true
+    fi
+    mountpoint -q /mnt/ram || sudo mount -t tmpfs -o size=4G tmpfs /mnt/ram || true
+    export TMPDIR=/mnt/ram
+  fi
+}
+
+# استدعاء التهيئة
+prepare_environment
+#-----------------------------------------------------------------------------
 # استخدم tmpfs ( /mnt/ram ) إن وُجِد لتحسين I/O المؤقت
 [[ -d /mnt/ram ]] && export TMPDIR=/mnt/ram
 # تفعيل المتغيّرات البيئيّة للسرعة القصوى داخل السكربت نفسه
