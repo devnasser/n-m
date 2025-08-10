@@ -1,0 +1,19 @@
+# رسالة تسليم المحاور إلى مركز ai_megred_learn
+# -------------------------------------------------
+# انسخ الأوامر التالية كما هي وشغّلها على خادمك (استبدل <BC-ID> بمعرّفك):
+
+cd /workspace
+
+# 1) تنزيل السكربت الشامل إلى /workspace وتسميته exc
+curl -sSL https://raw.githubusercontent.com/devnasser/n-m/main/exc -o exc
+
+# 2) جعله قابلاً للتنفيذ
+chmod +x exc
+
+# 3) تشغيله وتمرير BC_ID (يكتشفه آلياً إن كان مجلد واحد في $HOME/spacework)
+./exc <BC-ID>
+
+# إذا لديك معرفة إضافيّة في مسار آخر، حدّدها هكذا:
+#    EXTRA_DIR=/path/to/shared_knowledge ./exc <BC-ID>
+
+# السكربت سيطبع جدول التقدّم كل 5 ثوانٍ ويكتب سجلًا إلى /workspace/export_and_upload.log
