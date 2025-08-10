@@ -83,6 +83,14 @@ PREPARE_ENV=true
 DEST_PARENT="/workspace/ai_megred_learn"
 SHARD_DIR="$DEST_PARENT/shard"
 
+LOG_FILE="/workspace/export_and_upload.log"
+progress() {
+  local pct="$1" msg="$2"
+  echo "[$pct%] $msg" | tee -a "$LOG_FILE"
+}
+
+progress 0 "بدء السكربت في /workspace (سجّل إلى $LOG_FILE)"
+
 set -euo pipefail
 #-----------------------------------------------------------------------------
 # دالة تحضير البيئة (اختيارية)
@@ -115,7 +123,7 @@ prepare_environment() {
 }
 
 # استدعاء التهيئة
-prepare_environment
+prepare_environment && progress 10 "تهيئة البيئة اكتملت"
 #-----------------------------------------------------------------------------
 # استخدم tmpfs ( /mnt/ram ) إن وُجِد لتحسين I/O المؤقت
 [[ -d /mnt/ram ]] && export TMPDIR=/mnt/ram
@@ -141,6 +149,8 @@ ARCHIVE="${BC_ID}.tar.zst"
 echo "[*] ضغط الأرشيف بـ zstd -19 -T0 …"
 tar -I 'zstd -19 -T0' -cf "$ARCHIVE" -C "$TMP" .
 
+progress 70 "انتهاء الضغط، الأرشيف: $ARCHIVE"
+
 DEST="$SHARD_DIR/$ARCHIVE"   # هذا هو المسار على مخزوننا المركزي
 if [[ -z "$REMOTE" ]]; then
   echo "[*] نسخ محلي إلى $DEST …"
@@ -150,6 +160,8 @@ else
   echo "[*] رفع عبر rsync إلى $REMOTE:$DEST …"
   rsync -avP --compress-level=9 "$ARCHIVE" "$REMOTE:$DEST"
 fi
+
+progress 100 "تم الرفع إلى المخزون المركزي بنجاح"
 
 echo "[✓] تم الرفع. سيُعالج النظام الملف خلال ثوانٍ."
 
