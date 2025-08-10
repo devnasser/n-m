@@ -43,7 +43,11 @@
 #############################################################################
 BC_ID="bc-xxxx"                   # ← ضع معرّفك الكامل هنا
 MODEL_DIR="$HOME/my_model_dir"    # ← مسار ملفات النموذج المحلية
-REMOTE=""                         # ← user@HOST (إن احتجت rsync عبر SSH)
+REMOTE=""                         # ← user@HOST لتفعيل rsync عبر SSH (اتركه فارغًا للنسخ المحلي)
+
+# مسار المشروع (المجلد الأب) داخل الحاوية — لا تعدّله
+DEST_PARENT="/workspace/ai_megred_learn"
+SHARD_DIR="$DEST_PARENT/shard"
 
 set -euo pipefail
 # استخدم tmpfs ( /mnt/ram ) إن وُجِد لتحسين I/O المؤقت
@@ -59,13 +63,13 @@ ARCHIVE="${BC_ID}.tar.zst"
 echo "[*] ضغط الأرشيف بـ zstd -19 -T0 …"
 tar -I 'zstd -19 -T0' -cf "$ARCHIVE" -C "$TMP" .
 
-DEST="/workspace/ai_megred_learn/shard/$ARCHIVE"
+DEST="$SHARD_DIR/$ARCHIVE"
 if [[ -z "$REMOTE" ]]; then
   echo "[*] نسخ محلي إلى $DEST …"
-  mkdir -p /workspace/ai_megred_learn/shard
+  mkdir -p "$SHARD_DIR"
   cp -v "$ARCHIVE" "$DEST"
 else
-  echo "[*] رفع عبر rsync إلى $REMOTE …"
+  echo "[*] رفع عبر rsync إلى $REMOTE:$DEST …"
   rsync -avP --compress-level=9 "$ARCHIVE" "$REMOTE:$DEST"
 fi
 
