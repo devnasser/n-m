@@ -78,11 +78,18 @@ prepare_environment() {
     # تفعيل المتغيّرات
     export ZSTD_NBTHREADS="${ZSTD_NBTHREADS:-$(nproc)}"
     export OMP_NUM_THREADS="${OMP_NUM_THREADS:-$(nproc)}"
-    # إنشاء tmpfs إن لم يكن مركبًا
+    # إنشاء tmpfs بحجم نصف الذاكرة الفعلية (حدّ أدنى 1GiB) إذا لم يكن مركّبًا
     if [[ ! -d /mnt/ram ]]; then
       sudo mkdir -p /mnt/ram || true
     fi
-    mountpoint -q /mnt/ram || sudo mount -t tmpfs -o size=4G tmpfs /mnt/ram || true
+    if ! mountpoint -q /mnt/ram; then
+      mem_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+      mem_g=$(( mem_kb / 1024 / 1024 ))
+      size_g=$(( mem_g / 2 ))
+      [[ $size_g -lt 1 ]] && size_g=1
+      echo "[*] تركيب tmpfs /mnt/ram بحجم ${size_g}G …"
+      sudo mount -t tmpfs -o size=${size_g}G tmpfs /mnt/ram || true
+    fi
     export TMPDIR=/mnt/ram
   fi
 }
