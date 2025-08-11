@@ -23,7 +23,7 @@ me-stop:
 	@rm -f /workspace/me/.knowledge_sync.pid /workspace/me/.knowledge_sync.launch.pid || true
 	@echo "knowledge sync stopped"
 
-.PHONY: setup-fast setup-ultimate setup-full setup-extra setup-health setup-bench setup-status
+.PHONY: setup-fast setup-ultimate setup-full setup-extra setup-health setup-bench setup-status setup-super
 setup-fast:
 	bash /workspace/scripts/fast_env_boost.sh
 
@@ -44,6 +44,11 @@ setup-bench:
 
 setup-status:
 	bash /workspace/scripts/status.sh
+
+setup-super:
+	@echo "🚀 Activating SUPER PROFESSIONAL MODE..."
+	@bash /workspace/scripts/super_professional_mode.sh
+	@python3 /workspace/scripts/parallel_optimizer.py
 
 .PHONY: me-watch-start me-watch-stop
 me-watch-start:

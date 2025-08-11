@@ -1,0 +1,172 @@
+[1m[0;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[1m[0;36m          النمط الاحترافي الخارق - SUPER PROFESSIONAL MODE[0m
+[1m[0;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[1;33m[2025-08-11T02:21:07Z] Initializing...[0m
+[0;36mSystem Resources:[0m
+  CPU Cores: [1m4[0m
+  Total Memory: [1m15GB[0m
+  Available Memory: [1m14GB[0m
+[0;34m[BACKUP] Creating safety backups...[0m
+[0;34m[TOOLS] Installing essential tools...[0m
+[0;34m[RAMDISK] Setting up high-speed RAM disk...[0m
+[0;34m[SYSTEM] Optimizing system settings...[0m
+/workspace/scripts/super_professional_mode.sh: line 51: parallel: command not found
+vm.swappiness = 10
+vm.dirty_ratio = 15
+vm.dirty_background_ratio = 5
+net.core.rmem_max = 134217728
+net.core.wmem_max = 134217728
+[0;32m[RAMDISK] RAM disk setup completed (3GB main)[0m
+net.ipv4.tcp_rmem = 4096 87380 134217728
+net.ipv4.tcp_wmem = 4096 65536 134217728
+fs.file-max = 2097152
+fs.inotify.max_user_watches = 524288
+[0;32m[SYSTEM] Optimization completed[0m
+[0;34m[GIT] Optimizing Git configuration...[0m
+[0;34m[BUILD] Configuring parallel build environment...[0m
+[0;34m[WORKSPACE] Optimizing workspace...[0m
+[0;32m[BUILD] Parallel build environment ready[0m
+Get:1 http://security.ubuntu.com/ubuntu plucky-security InRelease [126 kB]
+[0;32m[WORKSPACE] Workspace optimization completed[0m
+[0;32m[GIT] Git optimization completed[0m
+Get:2 http://security.ubuntu.com/ubuntu plucky-security/main amd64 Packages [217 kB]
+Get:3 http://security.ubuntu.com/ubuntu plucky-security/multiverse amd64 Packages [18.8 kB]
+Get:4 http://security.ubuntu.com/ubuntu plucky-security/restricted amd64 Packages [163 kB]
+Get:5 http://security.ubuntu.com/ubuntu plucky-security/universe amd64 Packages [129 kB]
+Hit:6 http://archive.ubuntu.com/ubuntu plucky InRelease
+Get:7 http://archive.ubuntu.com/ubuntu plucky-updates InRelease [126 kB]
+Get:8 http://archive.ubuntu.com/ubuntu plucky-backports InRelease [126 kB]
+Get:9 http://archive.ubuntu.com/ubuntu plucky-updates/restricted amd64 Packages [181 kB]
+Get:10 http://archive.ubuntu.com/ubuntu plucky-updates/universe amd64 Packages [233 kB]
+Get:11 http://archive.ubuntu.com/ubuntu plucky-updates/multiverse amd64 Packages [34.8 kB]
+Get:12 http://archive.ubuntu.com/ubuntu plucky-updates/main amd64 Packages [334 kB]
+Fetched 1689 kB in 1s (1829 kB/s)
+Reading package lists...
+Reading package lists...E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2302 (apt-get)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2302 (apt-get)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2302 (apt-get)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2302 (apt-get)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2302 (apt-get)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+E: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process 2302 (apt-get)
+E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+
+Building dependency tree...
+Reading state information...
+cmake is already the newest version (3.31.6-1ubuntu1).
+The following additional packages will be installed:
+  libfmt10 libhiredis1.1.0
+Suggested packages:
+  distcc | icecc
+The following NEW packages will be installed:
+  ccache libfmt10 libhiredis1.1.0 ninja-build pigz zstd
+0 upgraded, 6 newly installed, 0 to remove and 81 not upgraded.
+Need to get 1693 kB of archives.
+After this operation, 4832 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu plucky/universe amd64 pigz amd64 2.8-1 [65.6 kB]
+Get:2 http://archive.ubuntu.com/ubuntu plucky/universe amd64 libfmt10 amd64 10.1.1+ds1-4 [79.0 kB]
+Get:3 http://archive.ubuntu.com/ubuntu plucky/universe amd64 libhiredis1.1.0 amd64 1.2.0-6ubuntu3 [41.4 kB]
+Get:4 http://archive.ubuntu.com/ubuntu plucky/universe amd64 ccache amd64 4.10.2-1build1 [582 kB]
+Get:5 http://archive.ubuntu.com/ubuntu plucky/universe amd64 ninja-build amd64 1.12.1-1 [149 kB]
+Get:6 http://archive.ubuntu.com/ubuntu plucky/main amd64 zstd amd64 1.5.6+dfsg-2 [775 kB]
+debconf: unable to initialize frontend: Dialog
+debconf: (No usable dialog-like program is installed, so the dialog based frontend cannot be used. at /usr/share/perl5/Debconf/FrontEnd/Dialog.pm line 79, <STDIN> line 6.)
+debconf: falling back to frontend: Readline
+Fetched 1693 kB in 0s (11.7 MB/s)
+Selecting previously unselected package pigz.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 60536 files and directories currently installed.)
+Preparing to unpack .../0-pigz_2.8-1_amd64.deb ...
+Unpacking pigz (2.8-1) ...
+Selecting previously unselected package libfmt10:amd64.
+Preparing to unpack .../1-libfmt10_10.1.1+ds1-4_amd64.deb ...
+Unpacking libfmt10:amd64 (10.1.1+ds1-4) ...
+Selecting previously unselected package libhiredis1.1.0:amd64.
+Preparing to unpack .../2-libhiredis1.1.0_1.2.0-6ubuntu3_amd64.deb ...
+Unpacking libhiredis1.1.0:amd64 (1.2.0-6ubuntu3) ...
+Selecting previously unselected package ccache.
+Preparing to unpack .../3-ccache_4.10.2-1build1_amd64.deb ...
+Unpacking ccache (4.10.2-1build1) ...
+Selecting previously unselected package ninja-build.
+Preparing to unpack .../4-ninja-build_1.12.1-1_amd64.deb ...
+Unpacking ninja-build (1.12.1-1) ...
+Selecting previously unselected package zstd.
+Preparing to unpack .../5-zstd_1.5.6+dfsg-2_amd64.deb ...
+Unpacking zstd (1.5.6+dfsg-2) ...
+Setting up ninja-build (1.12.1-1) ...
+Setting up pigz (2.8-1) ...
+Setting up libhiredis1.1.0:amd64 (1.2.0-6ubuntu3) ...
+Setting up zstd (1.5.6+dfsg-2) ...
+Setting up libfmt10:amd64 (10.1.1+ds1-4) ...
+Setting up ccache (4.10.2-1build1) ...
+Updating symlinks in /usr/lib/ccache ...
+Processing triggers for libc-bin (2.41-6ubuntu1) ...
+Processing triggers for man-db (2.13.0-1) ...
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.13/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.13/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+[0;32m[TOOLS] Installation completed[0m
+[0;34m[KNOWLEDGE] Setting up enhanced knowledge system...[0m
+make[1]: Entering directory '/workspace'
+chmod +x /workspace/bin/knowledge_sync.sh
+make[1]: Entering directory '/workspace'
+chmod +x /workspace/bin/knowledge_watch.sh
+nohup /workspace/bin/knowledge_sync.sh >/workspace/me/_logs/nohup.out 2>&1 & echo $! >/workspace/me/.knowledge_sync.launch.pid || true
+nohup /workspace/bin/knowledge_watch.sh >/workspace/me/_logs/nohup.watch.out 2>&1 & echo $! >/workspace/me/.knowledge_watch.launch.pid || true
+knowledge sync requested to start (check /workspace/me/_logs)
+make[1]: Leaving directory '/workspace'
+knowledge watch requested to start (inotify)
+make[1]: Leaving directory '/workspace'
+Knowledge built at 2025-08-11T02:21:11Z; files=17; changed=17; duration_s=0.010; writes={'json': True, 'index': True, 'summary': False}
+[0;32m[KNOWLEDGE] Knowledge system activated[0m
+[0;34m[MONITOR] Starting performance monitoring...[0m
+[0;32m[MONITOR] Performance monitoring started[0m
+[1m[0;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[1m[0;32m✓ SUPER PROFESSIONAL MODE ACTIVATED[0m
+[1m[0;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m
+[0;36mExecution time: [1m4s[0m
+[0;36mCPU cores utilized: [1m4[0m
+[0;36mParallel processes: [1mMaximum[0m
+[0;36mSystem safety: [1mGuaranteed[0m
+[0;36mPerformance boost: [1mEXTREME[0m
+[1m[0;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m

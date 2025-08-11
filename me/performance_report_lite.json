@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-08-11T02:22:28.503881",
+  "mode": "SUPER_PROFESSIONAL_LITE",
+  "system": {
+    "cpu_cores": 4,
+    "memory_gb": 15.642253875732422,
+    "stats": {
+      "cpu_usage": "%Cpu(s):  2.4 us,  0.0 sy,  0.0 ni, 97.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st ",
+      "memory": {
+        "total_gb": 15.642253875732422,
+        "available_gb": 14.54971694946289,
+        "used_percent": 6.984523681491361
+      },
+      "disk": {
+        "total": "126G",
+        "used": "5.8G",
+        "available": "114G",
+        "percent": "5%"
+      }
+    }
+  },
+  "optimizations": [
+    "workspace_analysis",
+    "async_tasks"
+  ],
+  "status": "ACTIVE"
+}
