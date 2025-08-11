@@ -1,0 +1,168 @@
+$ openssl speed -multi 4 rsa2048 aes-256-cbc sha256
+Forked child 0
+Forked child 1
++DT:sha256:3:16
+Forked child 2
++DT:sha256:3:16
++DT:sha256:3:16
++DT:sha256:3:16
++R:24413673:sha256:3.000000
++R:24306794:sha256:3.000000
++DT:sha256:3:64
++DT:sha256:3:64
++R:24316424:sha256:3.000000
++DT:sha256:3:64
++R:24153367:sha256:3.000000
++DT:sha256:3:64
++R:19564834:sha256:3.000000
++R:19511464:sha256:3.000000
++DT:sha256:3:256
++R:19678826:sha256:3.000000
++DT:sha256:3:256
++DT:sha256:3:256
++R:19257491:sha256:3.000000
++DT:sha256:3:256
++R:11553526:sha256:3.000000
++R:11287959:sha256:3.000000
++DT:sha256:3:1024
++DT:sha256:3:1024
++R:11600050:sha256:3.000000
++DT:sha256:3:1024
++R:11284570:sha256:3.000000
++DT:sha256:3:1024
++R:4547915:sha256:3.000000
++R:4548986:sha256:3.000000
++DT:sha256:3:8192
++R:4577287:sha256:3.000000
++DT:sha256:3:8192
++R:4580366:sha256:3.000000
++DT:sha256:3:8192
++DT:sha256:3:8192
++R:651984:sha256:3.000000
++DT:sha256:3:16384
++R:648769:sha256:3.000000
++DT:sha256:3:16384
++R:642470:sha256:3.000000
++DT:sha256:3:16384
++R:651232:sha256:3.000000
++DT:sha256:3:16384
++R:326595:sha256:3.000000
++R:331751:sha256:3.000000
++R:327206:sha256:3.000000
++R:327092:sha256:3.000000
++DT:aes-256-cbc:3:16
++DT:aes-256-cbc:3:16
++DT:aes-256-cbc:3:16
++DT:aes-256-cbc:3:16
++R:207745157:aes-256-cbc:3.000000
++R:210308862:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:64
++R:207578168:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:64
++DT:aes-256-cbc:3:64
++R:209492865:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:64
++R:62534241:aes-256-cbc:3.000000
++R:62727029:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:256
++DT:aes-256-cbc:3:256
++R:63335288:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:256
++R:63419408:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:256
++R:15823781:aes-256-cbc:3.000000
++R:15959648:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:1024
++DT:aes-256-cbc:3:1024
++R:15905311:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:1024
++R:15945153:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:1024
++R:4043296:aes-256-cbc:3.000000
++R:4025472:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:8192
++DT:aes-256-cbc:3:8192
++R:3919990:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:8192
++R:4048165:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:8192
++R:503837:aes-256-cbc:3.000000
++R:509043:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:16384
++DT:aes-256-cbc:3:16384
++R:501215:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:16384
++R:506212:aes-256-cbc:3.000000
++DT:aes-256-cbc:3:16384
++R:253325:aes-256-cbc:3.000000
++R:250954:aes-256-cbc:3.000000
++R:250764:aes-256-cbc:3.000000
++R:251435:aes-256-cbc:3.000000
++DTP:2048:private:rsa sign:10
++DTP:2048:private:rsa sign:10
++DTP:2048:private:rsa sign:10
++DTP:2048:private:rsa sign:10
++R1:40439:2048:10.00
++R1:39625:2048:10.00
++R1:40336:2048:10.00
++DTP:2048:public:rsa verify:10
++DTP:2048:public:rsa verify:10
++DTP:2048:public:rsa verify:10
++R1:40153:2048:10.00
++DTP:2048:public:rsa verify:10
++R2:653296:2048:10.00
++R2:654023:2048:10.00
++DTP:2048:public:rsa encrypt:10
++DTP:2048:public:rsa encrypt:10
++R2:663321:2048:10.00
++DTP:2048:public:rsa encrypt:10
++R2:661507:2048:10.00
++DTP:2048:public:rsa encrypt:10
++R3:632313:2048:10.00
++R3:626476:2048:10.00
++R3:637142:2048:10.00
++DTP:2048:private:rsa decrypt:10
++DTP:2048:private:rsa decrypt:10
++DTP:2048:private:rsa decrypt:10
++R3:639566:2048:10.00
++DTP:2048:private:rsa decrypt:10
++R4:38597:2048:10.00
++R4:38482:2048:10.00
++R4:38480:2048:10.00
++R4:38557:2048:10.00
++DTP:rsa2048:keygen:10
++DTP:rsa2048:keygen:10
++DTP:rsa2048:keygen:10
++DTP:rsa2048:keygen:10
++R15:286:rsa2048:10.00
++DTP:rsa2048:encaps:10
++R15:266:rsa2048:10.02
++DTP:rsa2048:encaps:10
++R15:281:rsa2048:10.03
++DTP:rsa2048:encaps:10
++R15:261:rsa2048:10.04
++DTP:rsa2048:encaps:10
++R16:609186:rsa2048:10.00
++DTP:rsa2048:decaps:10
++R16:600666:rsa2048:10.00
++DTP:rsa2048:decaps:10
++R16:601899:rsa2048:10.00
++DTP:rsa2048:decaps:10
++R16:599305:rsa2048:10.00
++DTP:rsa2048:decaps:10
++R17:40384:rsa2048:10.01
++DTP:rsa2048:keygen:10
++R17:40128:rsa2048:10.00
++R17:40537:rsa2048:10.00
++R17:40549:rsa2048:10.00
++DTP:rsa2048:keygen:10
++DTP:rsa2048:keygen:10
++DTP:rsa2048:keygen:10
++R18:250:rsa2048:10.01
++DTP:rsa2048:signs:10
++R18:273:rsa2048:10.02
++DTP:rsa2048:signs:10
++R18:267:rsa2048:10.11
++DTP:rsa2048:signs:10
++R18:263:rsa2048:10.07
++DTP:rsa2048:signs:10
