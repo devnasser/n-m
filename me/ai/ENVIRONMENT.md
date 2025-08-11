@@ -46,7 +46,7 @@ Vulnerability Tsx async abort:           Mitigation; TSX disabled
 
 ````
 total        used        free      shared  buff/cache   available
-Mem:            15Gi       1.5Gi       8.6Gi        10Mi       5.9Gi        14Gi
+Mem:            15Gi       1.1Gi       9.2Gi        10Mi       5.6Gi        14Gi
 Swap:             0B          0B          0B
 ````
 

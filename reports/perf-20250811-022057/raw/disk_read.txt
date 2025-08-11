@@ -1,0 +1,2 @@
+$ dd if=/workspace/.dd.test of=/dev/null bs=1M iflag=direct 2>&1 | tail -n 1; rm -f /workspace/.dd.test
+2147483648 bytes (2.1 GB, 2.0 GiB) copied, 3.17003 s, 677 MB/s
