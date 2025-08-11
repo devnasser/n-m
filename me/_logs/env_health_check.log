@@ -16,3 +16,21 @@ total 12K
 drwxr-xr-x 2 ubuntu ubuntu 4.0K Aug  8 07:33 .
 drwxr-xr-x 3 ubuntu ubuntu 4.0K Aug  8 07:33 ..
 -rw-r--r-- 1 ubuntu ubuntu  195 Aug  8 07:33 opcache-cli.ini
+[env_health_check] 2025-08-11T02:20:44Z
+Linux cursor 6.1.147 #1 SMP PREEMPT_DYNAMIC Tue Aug  5 21:01:56 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       1.1Gi       9.3Gi        10Mi       5.6Gi        14Gi
+Swap:             0B          0B          0B
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         126G  5.8G  114G   5% /
+/usr/bin/php
+PHP 8.4.5 (cli) (built: Jul 14 2025 18:20:32) (NTS)
+Copyright (c) The PHP Group
+/usr/bin/composer
+Composer version 2.8.6 2025-02-25 13:03:50
+PHP version 8.4.5 (/usr/bin/php8.4)
+Run the "diagnose" command to get more detailed diagnostics output.
+total 12K
+drwxr-xr-x 2 ubuntu ubuntu 4.0K Aug  5 23:13 .
+drwxr-xr-x 3 ubuntu ubuntu 4.0K Aug  5 23:13 ..
+-rw-r--r-- 1 ubuntu ubuntu  195 Aug 11 02:19 opcache-cli.ini

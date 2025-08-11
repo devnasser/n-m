@@ -1,0 +1,2 @@
+$ curl -L -o /dev/null -s -w 'dns: %{time_namelookup}s connect: %{time_connect}s tls: %{time_appconnect}s ttfb: %{time_starttransfer}s total: %{time_total}s\n' https://speed.hetzner.de/100MB.bin
+dns: 0.296704s connect: 0.402328s tls: 0.000000s ttfb: 0.000000s total: 0.514281s
